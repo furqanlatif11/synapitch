@@ -164,7 +164,7 @@ export default function Hero() {
                 ))}
               </div>
               <p className="text-sm text-gray-700">
-                <span className="font-semibold">1,200+ 5-star reviews</span>
+                <span className="font-semibold">1,300+ 5-star reviews</span>
               </p>
             </motion.div>
           </motion.div>
