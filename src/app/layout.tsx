@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     siteName: "Synapitch",
     images: [
       {
-        url: "/assets/images/synapitch-og-image.webp",
+        url: "/assets/images/mainLogo.png",
         width: 1200,
         height: 630,
         alt: "Synapitch — AI Proposal Generator for Freelancers",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     images: ["/assets/images/synapitch-og-image.webp"],
   },
   icons: {
-    icon: "/assets/icons/favicon.svg",
+    icon: "/assets/images/mainLogo.png",
   },
   alternates: {
     canonical: "https://synapitch.com/",
