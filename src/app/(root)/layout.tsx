@@ -1,6 +1,7 @@
 import { Urbanist } from "next/font/google";
 import "../globals.css";
 import Navbar from "./_components/navbar";
+import Footer from "./_components/footer";
 const urbanist = Urbanist({
   subsets: ["latin"],
   display: "swap",
@@ -29,6 +30,7 @@ export default function RootLayout({
         {/* Google Tag Manager (noscript fallback) */}
         <Navbar />
         {children}
+        <Footer/>
       </body>
     </html>
   );
