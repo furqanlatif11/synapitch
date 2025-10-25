@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 const navLinks = [
   { name: "Home", href: "#home" },
   { name: "Features", href: "#features" },
@@ -92,13 +93,12 @@ export default function Navbar() {
           ))}
 
           {/* Get Started Button */}
-          <motion.button
+          <Link
             className={`ml-4 px-6 py-2 rounded-full font-semibold text-white transition-all duration-300 ${buttonBgColor}`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            href='/auth/signup'
           >
             Get Started
-          </motion.button>
+          </Link>
         </div>
 
         {/* Mobile Menu Toggle */}
