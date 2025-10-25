@@ -5,11 +5,11 @@ import { motion } from "framer-motion";
 import { TrendingUp, Zap, Target, Star, CheckCircle2 } from "lucide-react";
 
 const logos = [
-  "/assets/images/upwork.png",
-  "/assets/images/fiverr.png",
-  "/assets/images/freelancer.png",
-  "/assets/images/linkedin.png",
-  "/assets/images/remoteok.png",
+  "/assets/platforms/upwork.webp",
+  "/assets/platforms/fiverr.webp",
+  "/assets/platforms/freelancer.webp",
+  "/assets/platforms/linkedin.webp",
+  "/assets/platforms/remoteok.webp",
 ];
 
 const stats = [
@@ -146,8 +146,8 @@ export default function TrustedBy() {
                   <Image
                     src={logo}
                     alt="Platform logo"
-                    width={140}
-                    height={55}
+                    width={180}
+                    height={75}
                     className="object-contain"
                   />
                 </div>
