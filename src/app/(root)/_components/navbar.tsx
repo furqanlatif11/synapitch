@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-
+import Image from "next/image";
 const navLinks = [
   { name: "Home", href: "#home" },
   { name: "Features", href: "#features" },
@@ -62,13 +62,15 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center px-6 md:px-12 py-4">
         {/* Brand */}
-        <motion.a
+       <div>
+         <motion.a
           href="#home"
-          className={`text-2xl font-bold tracking-tight transition-colors duration-300 ${logoColor}`}
+          className={`text-2xl font-bold tracking-tight transition-colors duration-300 flex gap-3 items-center ${logoColor}`}
           whileHover={{ scale: 1.05 }}
         >
-          Synapitch
+         <Image src="/assets/images/mainLogo.png" alt="Synapitch Logo" width={50} height={50}/> Synapitch
         </motion.a>
+       </div>
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center space-x-8">

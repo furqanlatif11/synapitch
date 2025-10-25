@@ -2,6 +2,7 @@ import { Urbanist } from "next/font/google";
 import "../globals.css";
 import Navbar from "./_components/navbar";
 import Footer from "./_components/footer";
+import BackToTopButton from "./_components/backtotop";
 const urbanist = Urbanist({
   subsets: ["latin"],
   display: "swap",
@@ -31,6 +32,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer/>
+       <BackToTopButton/>
       </body>
     </html>
   );
