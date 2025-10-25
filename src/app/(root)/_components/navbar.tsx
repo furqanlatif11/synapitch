@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -15,42 +15,24 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [bgOpacity, setBgOpacity] = useState(0);
 
-  // Apply theme to root vars
-  const applyTheme = (mode: "light" | "dark") => {
-    const root = document.documentElement;
-
-    if (mode === "light") {
-      root.style.setProperty("--background", "#ffffff");
-      root.style.setProperty("--foreground", "#171717");
-    } else {
-      root.style.setProperty("--background", "#0a0a0a");
-      root.style.setProperty("--foreground", "#ededed");
-    }
-
-    setTheme(mode);
-    localStorage.setItem("theme", mode);
-  };
-
+  // Calculate navbar background opacity based on scroll position
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
-    const prefersDark =
-      window.matchMedia &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches;
-    applyTheme(savedTheme || (prefersDark ? "dark" : "light"));
-  }, []);
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const heroHeight = window.innerHeight;
+      
+      // Full opacity after 60% of hero section
+      const opacity = Math.min(scrollY / (heroHeight * 0.6), 1);
+      
+      setBgOpacity(opacity);
+      setScrolled(scrollY > 40);
+    };
 
-  // Navbar background + scroll tracking
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const toggleTheme = () => {
-    applyTheme(theme === "light" ? "dark" : "light");
-  };
 
   const handleScrollTo = (
     e: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -62,23 +44,27 @@ export default function Navbar() {
     setMenuOpen(false);
   };
 
+  // Calculate dynamic colors based on scroll
+  const textColor = bgOpacity > 0.5 ? "text-gray-900" : "text-gray-900";
+  const logoColor = bgOpacity > 0.5 ? "text-[var(--primary)]" : "bg-gradient-to-r from-green-300 to-emerald-400 bg-clip-text text-transparent";
+  const linkHoverColor = bgOpacity > 0.5 ? "hover:text-[var(--primary)]" : "hover:text-green-300";
+  const buttonBgColor = bgOpacity > 0.5 ? "bg-[var(--primary)] hover:bg-[var(--primary-dark)]" : "bg-[var(--primary)] hover:bg-[var(--primary-dark)]";
+  const mobileMenuBg = bgOpacity > 0.5 ? "bg-white text-gray-900" : "bg-green-900/95 text-white backdrop-blur-md";
+
   return (
     <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white text-green-700 shadow-md dark:bg-[#0a0a0a] dark:text-green-400"
-          : "bg-transparent text-white"
-      }`}
+      className="fixed top-0 left-0 w-full z-50 transition-all duration-300"
+      style={{
+        backgroundColor: `rgba(255, 255, 255, ${bgOpacity})`,
+        backdropFilter: `blur(${bgOpacity * 10}px)`,
+        boxShadow: bgOpacity > 0.1 ? "0 1px 3px rgba(0, 0, 0, 0.05)" : "none",
+      }}
     >
-      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-6 md:px-12 py-4">
         {/* Brand */}
         <motion.a
           href="#home"
-          className={`text-2xl font-bold tracking-tight ${
-            scrolled
-              ? "text-green-700 dark:text-green-400"
-              : "bg-gradient-to-r from-green-200 to-emerald-400 bg-clip-text text-transparent"
-          }`}
+          className={`text-2xl font-bold tracking-tight transition-colors duration-300 ${logoColor}`}
           whileHover={{ scale: 1.05 }}
         >
           Synapitch
@@ -91,63 +77,36 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               onClick={(e) => handleScrollTo(e, link.href)}
-              className={`relative font-medium transition-colors ${
-                scrolled
-                  ? "text-green-700 dark:text-green-400 hover:text-emerald-600 dark:hover:text-emerald-300"
-                  : "text-white hover:text-green-200"
-              }`}
+              className={`relative font-medium transition-colors duration-300 ${textColor} ${linkHoverColor}`}
             >
               {link.name}
-              <span
-                className={`absolute left-0 bottom-[-4px] h-[2px] w-0 transition-all duration-300 ${
-                  scrolled
-                    ? "bg-green-500 dark:bg-emerald-400 hover:w-full"
-                    : "bg-white hover:w-full"
-                }`}
-              ></span>
+              <motion.span
+                className="absolute left-0 bottom-[-6px] h-[2px] bg-[var(--primary)]"
+                initial={{ width: 0 }}
+                whileHover={{ width: "100%" }}
+                transition={{ duration: 0.3 }}
+              />
             </a>
           ))}
 
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className={`p-2 rounded-full border transition ${
-              scrolled
-                ? "border-green-400 hover:bg-green-100 dark:hover:bg-green-900/30"
-                : "border-white/50 hover:bg-white/10"
-            }`}
-            aria-label="Toggle theme"
-          >
-            {theme === "light" ? (
-              <Moon size={18} className="text-inherit" />
-            ) : (
-              <Sun size={18} className="text-yellow-400" />
-            )}
-          </button>
-
-          {/* Auth Button */}
-          <button
-            className={`ml-4 px-5 py-2 rounded-full font-medium transition ${
-              scrolled
-                ? "bg-green-600 text-white hover:bg-green-700"
-                : "bg-white text-green-700 hover:bg-green-200"
-            }`}
+          {/* Get Started Button */}
+          <motion.button
+            className={`ml-4 px-6 py-2 rounded-full font-semibold text-white transition-all duration-300 ${buttonBgColor}`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             Get Started
-          </button>
+          </motion.button>
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden"
+          className="md:hidden transition-colors duration-300"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
+          style={{ color: bgOpacity > 0.5 ? "#0a0a0a" : "#ffffff" }}
         >
-          {menuOpen ? (
-            <X size={24} className={`${scrolled ? "text-green-700 dark:text-green-400" : "text-white"}`} />
-          ) : (
-            <Menu size={24} className={`${scrolled ? "text-green-700 dark:text-green-400" : "text-white"}`} />
-          )}
+          {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
@@ -159,44 +118,33 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className={`md:hidden px-6 py-4 ${
-              scrolled
-                ? "bg-white text-green-700 dark:bg-[#0a0a0a] dark:text-green-400"
-                : "bg-green-800 text-white"
+            className={`md:hidden px-6 py-6 border-t transition-all duration-300 ${
+              bgOpacity > 0.5
+                ? "bg-white border-gray-200 text-gray-900"
+                : "bg-green-900/95 border-green-800 text-white backdrop-blur-md"
             }`}
           >
-            {navLinks.map((link) => (
-              <a
+            {navLinks.map((link, i) => (
+              <motion.a
                 key={link.name}
                 href={link.href}
                 onClick={(e) => handleScrollTo(e, link.href)}
-                className="block py-2 text-sm font-medium hover:underline"
+                className="block py-3 text-base font-medium transition-colors hover:text-[var(--primary)]"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
               >
                 {link.name}
-              </a>
+              </motion.a>
             ))}
 
-            {/* Mobile Bottom Controls */}
-            <div className="flex justify-between items-center border-t border-white/10 dark:border-green-900 pt-4 mt-3">
-              <button
-                onClick={toggleTheme}
-                className="flex items-center gap-2 text-sm font-medium hover:text-green-400 transition"
-              >
-                {theme === "light" ? (
-                  <>
-                    <Moon size={16} /> Dark Mode
-                  </>
-                ) : (
-                  <>
-                    <Sun size={16} /> Light Mode
-                  </>
-                )}
-              </button>
-
-              <button className="px-4 py-2 rounded-full text-sm font-medium bg-green-500 text-white hover:bg-green-600 transition">
-                Get Started
-              </button>
-            </div>
+            {/* Mobile CTA */}
+            <motion.button
+              className="w-full mt-6 px-6 py-3 rounded-full text-base font-semibold bg-[var(--primary)] text-white hover:bg-[var(--primary-dark)] transition-all"
+              whileTap={{ scale: 0.95 }}
+            >
+              Get Started Free
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

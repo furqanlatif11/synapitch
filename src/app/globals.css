@@ -2,8 +2,8 @@
 
 /* 🌿 Synapitch Theme Variables */
 :root {
-  --background: #c6f4c9; /* soft minty white-green */
-  --foreground: #0a0a0a;
+  --background: rgb(199, 244, 224)int white-green */
+  --foreground: #1a1a1a; /* darker text */
   --primary: #00c97e; /* main green */
   --primary-light: #7ef3c5;
   --primary-dark: #009f68;
@@ -12,24 +12,13 @@
   --font-ubuntu: "Ubuntu", sans-serif;
 }
 
-/* 🌙 Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --primary: #00e099;
-    --primary-light: #00ffb3;
-    --primary-dark: #00c97e;
-    --accent: #00ffa3;
-    --gradient: linear-gradient(135deg, #00c97e 0%, #00e099 40%, #00ffa3 100%);
-  }
-}
+
 
 /* Apply theme */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var( --font-ubuntu, "Inter", sans-serif);
+  font-family: var(--font-ubuntu, "Inter", sans-serif);
   scroll-behavior: smooth;
 }
 
@@ -66,18 +55,20 @@ section {
 }
 
 .p {
-  @apply text-base md:text-lg text-gray-500 leading-relaxed;
+  @apply text-base md:text-lg leading-relaxed;
+  color: var(--foreground);
 }
 
 .small {
-  @apply text-sm text-gray-500;
+  @apply text-sm;
+  color: var(--foreground);
 }
 
 /* 💫 Buttons */
 .btn-primary {
-  @apply bg-[var(--primary)] text-black px-6 py-3 rounded-full font-semibold hover:bg-[var(--primary-dark)] transition;
+  @apply bg-[var(--primary)] text-white px-6 py-3 rounded-full font-semibold hover:bg-[var(--primary-dark)] transition;
 }
 
 .btn-outline {
-  @apply border border-[var(--primary)] text-[var(--primary)] px-6 py-3 rounded-full font-semibold hover:bg-[var(--primary)] hover:text-black transition;
+  @apply border border-[var(--primary)] text-[var(--primary)] px-6 py-3 rounded-full font-semibold hover:bg-[var(--primary)] hover:text-white transition;
 }
