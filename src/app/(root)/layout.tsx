@@ -3,6 +3,7 @@ import "../globals.css";
 import Navbar from "./_components/navbar";
 import Footer from "./_components/footer";
 import BackToTopButton from "./_components/backtotop";
+
 const urbanist = Urbanist({
   subsets: ["latin"],
   display: "swap",
@@ -31,8 +32,9 @@ export default function RootLayout({
         {/* Google Tag Manager (noscript fallback) */}
         <Navbar />
         {children}
-        <Footer/>
-       <BackToTopButton/>
+        <Footer />
+
+        <BackToTopButton />
       </body>
     </html>
   );

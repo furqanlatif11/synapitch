@@ -4,21 +4,61 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Github, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function SigninPage() {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
+  // ✅ Single unified state
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Signin Data:", formData);
+
+    const { email, password } = formData; // ✅ using correct state
+
+    if (!email || !password) {
+      toast.error("Please enter both email and password");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error || "Invalid credentials");
+        setLoading(false);
+        return;
+      }
+
+      toast.success("Login successful 🎉");
+      console.log("Logged in user:", data.user);
+
+      // redirect
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -29,7 +69,7 @@ export default function SigninPage() {
         transition={{ duration: 0.6 }}
         className="w-full max-w-5xl mx-auto rounded-3xl backdrop-blur-lg bg-white/60 dark:bg-white/5 border border-[var(--primary)]/10 shadow-lg flex flex-col md:flex-row overflow-hidden"
       >
-        {/* Left Side — Intro */}
+        {/* Left Side */}
         <div className="hidden md:flex flex-1 flex-col justify-center items-start px-12 py-16 bg-gradient-to-br from-[var(--primary)]/10 to-transparent">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -46,7 +86,7 @@ export default function SigninPage() {
           </motion.div>
         </div>
 
-        {/* Right Side — Form */}
+        {/* Right Side */}
         <div className="flex-1 flex flex-col justify-center px-8 md:px-12 py-12">
           <div className="max-w-md mx-auto w-full space-y-6">
             <div className="text-center">
@@ -64,35 +104,6 @@ export default function SigninPage() {
               </p>
             </div>
 
-            {/* Social Buttons */}
-            <div className="space-y-3 w-full max-w-xs mx-auto">
-              <motion.button
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-3 rounded-xl font-medium border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white bg-gradient-to-r from-white to-gray-50 dark:from-white/10 dark:to-white/5 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-3"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md bg-black">
-                    <Github className="w-4 h-4 text-white" />
-                  </div>
-                  <span>Sign in with GitHub</span>
-                </div>
-              </motion.button>
-
-              <motion.button
-                whileHover={{ scale: 1.02, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-3 rounded-xl font-medium border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white bg-gradient-to-r from-white to-[#f8f9fa] dark:from-white/10 dark:to-white/5 shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-3"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-md bg-white border border-gray-200 dark:border-white/10">
-                    <Mail className="w-4 h-4 text-[#EA4335]" />
-                  </div>
-                  <span>Sign in with Google</span>
-                </div>
-              </motion.button>
-            </div>
-
             {/* Divider */}
             <div className="flex items-center gap-3 text-gray-500 text-sm mt-6">
               <div className="h-px flex-1 bg-gray-300 dark:bg-white/10"></div>
@@ -100,7 +111,7 @@ export default function SigninPage() {
               <div className="h-px flex-1 bg-gray-300 dark:bg-white/10"></div>
             </div>
 
-            {/* Sign In Form */}
+            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
@@ -138,30 +149,19 @@ export default function SigninPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2">
-                <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 rounded border-gray-300 dark:border-white/20 text-[var(--primary)] focus:ring-[var(--primary)]"
-                  />
-                  Remember me
-                </label>
-                <Link
-                  href="/auth/forgot-password"
-                  className="text-sm text-[var(--primary)] hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 type="submit"
-                className="w-full py-2.5 rounded-lg font-semibold bg-[var(--primary)] hover:bg-[var(--primary-dark)] text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-6"
+                disabled={loading}
+                className={`w-full py-2.5 rounded-lg font-semibold text-white shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 mt-6 ${
+                  loading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[var(--primary)] hover:bg-[var(--primary-dark)]"
+                }`}
               >
-                Sign In
-                <ArrowRight className="w-4 h-4" />
+                {loading ? "Signing In..." : "Sign In"}
+                {!loading && <ArrowRight className="w-4 h-4" />}
               </motion.button>
             </form>
           </div>

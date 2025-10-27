@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 import type { Metadata } from "next";
-import './globals.css';
+import "./globals.css";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Synapitch | Smart AI-Powered Proposal Generator for Freelancers",
@@ -56,7 +57,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">{children}
+        <Toaster position="top-right" richColors closeButton />
+      </body>
+      
     </html>
   );
 }
