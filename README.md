@@ -30,11 +30,11 @@ With intelligent writing tools, collaborative editing, and stunning templates, i
 
 | Layer | Technologies |
 |-------|---------------|
-| **Frontend** | Next.js, React, Tailwind CSS |
-| **Backend** | Node.js / Convex / Express |
-| **Database** | PostgreSQL / MongoDB |
+| **Frontend** | Next.js, Tailwind CSS, ShadCN |
+| **Backend** | Node.js / Prisma / NeonDB |
+| **Database** | PostgreSQL |
 | **AI Integration** | OpenAI API (GPT models) |
-| **Deployment** | Vercel / Render / AWS |
+| **Deployment** | Vercel |
 
 ---
 
