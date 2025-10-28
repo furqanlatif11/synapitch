@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="./public/assets/images/mainLogo.png" alt="Synapitch Logo" width="60" style="vertical-align: middle; margin-right: 10px;"/>
-  <span style="font-size: 3.5rem; font-weight: 700; vertical-align: middle;">Synapitch</span>
+  <img src="./public/assets/images/mainLogo.png" alt="Synapitch Logo" width="80"/>
 </p>
 
 <p align="center">
+  <strong style="font-size: 2rem;">Synapitch</strong><br/>
   <em>AI-powered platform for crafting, refining, and delivering powerful pitches</em>
 </p>
 
