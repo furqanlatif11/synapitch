@@ -1,11 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mail, Lock, Github, ArrowRight } from "lucide-react";
+import { Mail, Lock, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { signIn } from "next-auth/react";
 
 export default function SigninPage() {
   const [formData, setFormData] = useState({
@@ -15,7 +16,6 @@ export default function SigninPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // ✅ Single unified state
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -24,7 +24,7 @@ export default function SigninPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { email, password } = formData; // ✅ using correct state
+    const { email, password } = formData;
 
     if (!email || !password) {
       toast.error("Please enter both email and password");
@@ -34,29 +34,26 @@ export default function SigninPage() {
     try {
       setLoading(true);
 
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      // Use NextAuth signIn
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        toast.error(data.error || "Invalid credentials");
+      if (result?.error) {
+        toast.error(result.error || "Invalid credentials");
         setLoading(false);
         return;
       }
 
-      toast.success("Login successful 🎉");
-      console.log("Logged in user:", data.user);
-
-      // redirect
-      router.push("/dashboard");
+      if (result?.ok) {
+        toast.success("Login successful 🎉");
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error("Login error:", error);
       toast.error("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
     }
   };

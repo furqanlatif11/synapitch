@@ -1,7 +1,7 @@
-// src/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Synapitch | Smart AI-Powered Proposal Generator for Freelancers",
@@ -48,6 +48,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://synapitch.com/",
   },
+  metadataBase: new URL(process.env.NEXTAUTH_URL || "http://localhost:3000"),
 };
 
 export default function RootLayout({
@@ -57,10 +58,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="antialiased">{children}
+      <body className="antialiased">
+        <Providers>{children}</Providers>
         <Toaster position="top-right" richColors closeButton />
       </body>
-      
     </html>
   );
 }

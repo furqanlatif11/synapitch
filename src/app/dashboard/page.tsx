@@ -1,16 +1,22 @@
-import { AppSidebar } from "@/components/app-sidebar"
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
-import { SectionCards } from "@/components/section-cards"
-import { SiteHeader } from "@/components/site-header"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { authOptions } from "../api/auth/[...nextauth]/route";
+import { AppSidebar } from "@/components/app-sidebar";
+import { ChartAreaInteractive } from "@/components/chart-area-interactive";
+import { DataTable } from "@/components/data-table";
+import { SectionCards } from "@/components/section-cards";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import data from "./data.json";
 
-import data from "./data.json"
+export default async function DashboardPage() {
+  // Server-side authentication check
+  const session = await getServerSession(authOptions);
 
-export default function Page() {
+  if (!session) {
+    redirect("/auth/signin");
+  }
+
   return (
     <SidebarProvider
       style={
@@ -36,6 +42,5 @@ export default function Page() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
-     
+  );
 }

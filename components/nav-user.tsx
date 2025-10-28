@@ -7,6 +7,10 @@ import {
   IconNotification,
   IconUserCircle,
 } from "@tabler/icons-react"
+import { signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
 
 import {
   Avatar,
@@ -39,6 +43,41 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true)
+      
+      // Call the API endpoint to clear session server-side
+      const response = await fetch("/api/auth/signout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to sign out")
+      }
+
+      // Clear NextAuth session client-side
+      await signOut({
+        redirect: false,
+      })
+
+      toast.success("Logged out successfully")
+
+      // Wait a moment for session to clear, then redirect
+      setTimeout(() => {
+        router.push("/")
+        router.refresh()
+      }, 500)
+    } catch (error) {
+      console.error("Logout error:", error)
+      toast.error("Failed to logout")
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <SidebarMenu>
@@ -98,9 +137,13 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="cursor-pointer hover:bg-red-50 dark:hover:bg-red-950/20"
+            >
               <IconLogout />
-              Log out
+              {isLoggingOut ? "Logging out..." : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
