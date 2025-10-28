@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧠 Synapitch
 
-## Getting Started
+**Synapitch** is an intelligent platform built to transform how teams **create, refine, and present ideas**.  
+Whether it’s a startup pitch, a project proposal, or a product concept — Synapitch helps you craft persuasive narratives powered by smart design and AI-assisted creativity.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- ✨ **AI-Powered Drafting** – Instantly generate pitch outlines, taglines, and content suggestions.  
+- 🤝 **Team Collaboration** – Co-create and edit in real-time with teammates.  
+- 🧩 **Custom Templates** – Choose from tailored pitch and presentation templates.  
+- 🔍 **Smart Analysis** – Get tone, clarity, and structure feedback automatically.  
+- ☁️ **Cloud Sync** – Work from anywhere; your pitches are securely stored and synced.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** Next.js, React, Tailwind CSS  
+- **Backend:** Node.js / Express (or Convex, Supabase, Firebase — adjust as per your stack)  
+- **Database:** PostgreSQL / MongoDB  
+- **AI Integration:** OpenAI API (GPT models)  
+- **Deployment:** Vercel / Render / AWS  
+
+---
+
+## 📦 Installation
+
+Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+git clone https://github.com/your-username/synapitch.git
+cd synapitch
