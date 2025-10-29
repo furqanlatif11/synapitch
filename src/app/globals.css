@@ -57,10 +57,10 @@ body {
 }
 
 /* Section paddings for consistent spacing */
-section {
+/* section {
   padding-top: 5rem;
   padding-bottom: 5rem;
-}
+} */
 
 /* 🌿 Text gradient effect */
 .text-gradient {

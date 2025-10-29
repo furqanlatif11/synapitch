@@ -19,4 +19,49 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+
+  profile   Profile?
+}
+
+model Profile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  
+  // Core profile information
+  headline        String   @default("")  // e.g., "Senior Full-Stack Developer | AI & Web3 Specialist"
+  about           String   @default("")  // comprehensive bio/summary
+  tagline         String   @default("")  // short one-liner
+  
+  // Professional details
+  skills          String[] @default([])  // array of skill tags
+  expertise       String[] @default([])  // domain expertise areas
+  certifications  String[] @default([])  // professional certifications
+  languages       String[] @default([])  // spoken languages
+  
+  // Experience & Education
+  experience      String   @default("")  // career summary
+  yearsExperience Int?                   // total years in industry
+  education       String   @default("")  // education details
+  
+  // Portfolio & Social
+  portfolioUrls   String[] @default([])  // personal portfolio links
+  githubUrl       String   @default("")
+  linkedinUrl     String   @default("")
+  twitterUrl      String   @default("")
+  
+  // Rates & Availability
+  hourlyRate      Int?                   // minimum hourly rate (PKR)
+  projectMinBudget Int?                  // minimum project budget
+  availability    String   @default("AVAILABLE") // AVAILABLE, BUSY, ON_BREAK
+  
+  // Metadata
+  profileStrength Int      @default(0)   // 0-100 completeness score
+  isPublic        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([isPublic])
 }
