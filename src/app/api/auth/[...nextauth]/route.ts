@@ -3,7 +3,6 @@ import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import type { JWT } from "next-auth/jwt";
 
 const prisma = new PrismaClient();
 
