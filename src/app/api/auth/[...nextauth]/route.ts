@@ -1,8 +1,17 @@
 // app/api/auth/[...nextauth]/route.ts (UPDATED)
 import NextAuth, { type NextAuthOptions } from "next-auth";
+import { DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession["user"]
+  }
+}
 
 const prisma = new PrismaClient();
 
@@ -39,7 +48,7 @@ export const authOptions: NextAuthOptions = {
 
           return {
             id: user.id,
-            name: user.name,
+            name: user.fullName,
             email: user.email,
           };
         } catch (error: any) {
