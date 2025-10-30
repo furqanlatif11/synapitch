@@ -3,8 +3,9 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/src/lib/prisma";
+import type { Profile } from "@prisma/client";
 
-async function parseJSON(req: Request) {
+async function parseJSON(req: Request): Promise<unknown> {
   try {
     return await req.json();
   } catch {
@@ -12,7 +13,28 @@ async function parseJSON(req: Request) {
   }
 }
 
-function calculateProfileStrength(profile: any): number {
+interface ProfileData {
+  headline?: string;
+  about?: string;
+  tagline?: string;
+  skills?: string[];
+  expertise?: string[];
+  certifications?: string[];
+  languages?: string[];
+  experience?: string;
+  yearsExperience?: number | null;
+  education?: string;
+  portfolioUrls?: string[];
+  githubUrl?: string;
+  linkedinUrl?: string;
+  twitterUrl?: string;
+  hourlyRate?: number | null;
+  projectMinBudget?: number | null;
+  availability?: string;
+  isPublic?: boolean;
+}
+
+function calculateProfileStrength(profile: Partial<Profile>): number {
   let strength = 0;
   if (profile.headline?.trim()) strength += 15;
   if (profile.about?.trim()) strength += 20;
@@ -25,7 +47,7 @@ function calculateProfileStrength(profile: any): number {
   return Math.min(strength, 100);
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
@@ -34,7 +56,11 @@ export async function GET(req: Request) {
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
-      include: { profile: true },
+      select: {
+        id: true,
+        email: true,
+        profile: true,
+      },
     });
 
     if (!user) {
@@ -59,9 +85,11 @@ export async function POST(req: Request) {
     }
 
     const body = await parseJSON(req);
-    if (!body) {
+    if (!body || typeof body !== 'object') {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
+
+    const data = body as ProfileData;
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email }
@@ -83,24 +111,24 @@ export async function POST(req: Request) {
 
     const profileData = {
       userId: user.id,
-      headline: body.headline || "",
-      about: body.about || "",
-      tagline: body.tagline || "",
-      skills: Array.isArray(body.skills) ? body.skills : [],
-      expertise: Array.isArray(body.expertise) ? body.expertise : [],
-      certifications: Array.isArray(body.certifications) ? body.certifications : [],
-      languages: Array.isArray(body.languages) ? body.languages : [],
-      experience: body.experience || "",
-      yearsExperience: body.yearsExperience ? Number(body.yearsExperience) : null,
-      education: body.education || "",
-      portfolioUrls: Array.isArray(body.portfolioUrls) ? body.portfolioUrls : [],
-      githubUrl: body.githubUrl || "",
-      linkedinUrl: body.linkedinUrl || "",
-      twitterUrl: body.twitterUrl || "",
-      hourlyRate: body.hourlyRate ? Number(body.hourlyRate) : null,
-      projectMinBudget: body.projectMinBudget ? Number(body.projectMinBudget) : null,
-      availability: body.availability || "AVAILABLE",
-      isPublic: body.isPublic || false,
+      headline: data.headline || "",
+      about: data.about || "",
+      tagline: data.tagline || "",
+      skills: Array.isArray(data.skills) ? data.skills : [],
+      expertise: Array.isArray(data.expertise) ? data.expertise : [],
+      certifications: Array.isArray(data.certifications) ? data.certifications : [],
+      languages: Array.isArray(data.languages) ? data.languages : [],
+      experience: data.experience || "",
+      yearsExperience: data.yearsExperience ? Number(data.yearsExperience) : null,
+      education: data.education || "",
+      portfolioUrls: Array.isArray(data.portfolioUrls) ? data.portfolioUrls : [],
+      githubUrl: data.githubUrl || "",
+      linkedinUrl: data.linkedinUrl || "",
+      twitterUrl: data.twitterUrl || "",
+      hourlyRate: data.hourlyRate ? Number(data.hourlyRate) : null,
+      projectMinBudget: data.projectMinBudget ? Number(data.projectMinBudget) : null,
+      availability: data.availability || "AVAILABLE",
+      isPublic: data.isPublic || false,
     };
 
     const profileStrength = calculateProfileStrength(profileData);
@@ -130,9 +158,11 @@ export async function PUT(req: Request) {
     }
 
     const body = await parseJSON(req);
-    if (!body) {
+    if (!body || typeof body !== 'object') {
       return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
     }
+
+    const data = body as ProfileData;
 
     const user = await prisma.user.findUnique({
       where: { email: session.user.email }
@@ -150,24 +180,24 @@ export async function PUT(req: Request) {
       // If profile doesn't exist, create it instead
       const profileData = {
         userId: user.id,
-        headline: body.headline || "",
-        about: body.about || "",
-        tagline: body.tagline || "",
-        skills: Array.isArray(body.skills) ? body.skills : [],
-        expertise: Array.isArray(body.expertise) ? body.expertise : [],
-        certifications: Array.isArray(body.certifications) ? body.certifications : [],
-        languages: Array.isArray(body.languages) ? body.languages : [],
-        experience: body.experience || "",
-        yearsExperience: body.yearsExperience ? Number(body.yearsExperience) : null,
-        education: body.education || "",
-        portfolioUrls: Array.isArray(body.portfolioUrls) ? body.portfolioUrls : [],
-        githubUrl: body.githubUrl || "",
-        linkedinUrl: body.linkedinUrl || "",
-        twitterUrl: body.twitterUrl || "",
-        hourlyRate: body.hourlyRate ? Number(body.hourlyRate) : null,
-        projectMinBudget: body.projectMinBudget ? Number(body.projectMinBudget) : null,
-        availability: body.availability || "AVAILABLE",
-        isPublic: body.isPublic || false,
+        headline: data.headline || "",
+        about: data.about || "",
+        tagline: data.tagline || "",
+        skills: Array.isArray(data.skills) ? data.skills : [],
+        expertise: Array.isArray(data.expertise) ? data.expertise : [],
+        certifications: Array.isArray(data.certifications) ? data.certifications : [],
+        languages: Array.isArray(data.languages) ? data.languages : [],
+        experience: data.experience || "",
+        yearsExperience: data.yearsExperience ? Number(data.yearsExperience) : null,
+        education: data.education || "",
+        portfolioUrls: Array.isArray(data.portfolioUrls) ? data.portfolioUrls : [],
+        githubUrl: data.githubUrl || "",
+        linkedinUrl: data.linkedinUrl || "",
+        twitterUrl: data.twitterUrl || "",
+        hourlyRate: data.hourlyRate ? Number(data.hourlyRate) : null,
+        projectMinBudget: data.projectMinBudget ? Number(data.projectMinBudget) : null,
+        availability: data.availability || "AVAILABLE",
+        isPublic: data.isPublic || false,
       };
 
       const profileStrength = calculateProfileStrength(profileData);
@@ -182,25 +212,25 @@ export async function PUT(req: Request) {
       return NextResponse.json({ profile }, { status: 201 });
     }
 
-    const updateData: any = {
-      headline: body.headline ?? currentProfile.headline,
-      about: body.about ?? currentProfile.about,
-      tagline: body.tagline ?? currentProfile.tagline,
-      skills: Array.isArray(body.skills) ? body.skills : currentProfile.skills,
-      expertise: Array.isArray(body.expertise) ? body.expertise : currentProfile.expertise,
-      certifications: Array.isArray(body.certifications) ? body.certifications : currentProfile.certifications,
-      languages: Array.isArray(body.languages) ? body.languages : currentProfile.languages,
-      experience: body.experience ?? currentProfile.experience,
-      yearsExperience: body.yearsExperience !== undefined ? Number(body.yearsExperience) : currentProfile.yearsExperience,
-      education: body.education ?? currentProfile.education,
-      portfolioUrls: Array.isArray(body.portfolioUrls) ? body.portfolioUrls : currentProfile.portfolioUrls,
-      githubUrl: body.githubUrl ?? currentProfile.githubUrl,
-      linkedinUrl: body.linkedinUrl ?? currentProfile.linkedinUrl,
-      twitterUrl: body.twitterUrl ?? currentProfile.twitterUrl,
-      hourlyRate: body.hourlyRate ? Number(body.hourlyRate) : currentProfile.hourlyRate,
-      projectMinBudget: body.projectMinBudget ? Number(body.projectMinBudget) : currentProfile.projectMinBudget,
-      availability: body.availability ?? currentProfile.availability,
-      isPublic: body.isPublic ?? currentProfile.isPublic,
+    const updateData: Partial<Profile> = {
+      headline: data.headline ?? currentProfile.headline,
+      about: data.about ?? currentProfile.about,
+      tagline: data.tagline ?? currentProfile.tagline,
+      skills: Array.isArray(data.skills) ? data.skills : currentProfile.skills,
+      expertise: Array.isArray(data.expertise) ? data.expertise : currentProfile.expertise,
+      certifications: Array.isArray(data.certifications) ? data.certifications : currentProfile.certifications,
+      languages: Array.isArray(data.languages) ? data.languages : currentProfile.languages,
+      experience: data.experience ?? currentProfile.experience,
+      yearsExperience: data.yearsExperience !== undefined ? Number(data.yearsExperience) : currentProfile.yearsExperience,
+      education: data.education ?? currentProfile.education,
+      portfolioUrls: Array.isArray(data.portfolioUrls) ? data.portfolioUrls : currentProfile.portfolioUrls,
+      githubUrl: data.githubUrl ?? currentProfile.githubUrl,
+      linkedinUrl: data.linkedinUrl ?? currentProfile.linkedinUrl,
+      twitterUrl: data.twitterUrl ?? currentProfile.twitterUrl,
+      hourlyRate: data.hourlyRate ? Number(data.hourlyRate) : currentProfile.hourlyRate,
+      projectMinBudget: data.projectMinBudget ? Number(data.projectMinBudget) : currentProfile.projectMinBudget,
+      availability: data.availability ?? currentProfile.availability,
+      isPublic: data.isPublic ?? currentProfile.isPublic,
     };
 
     // Calculate new profile strength
@@ -221,7 +251,7 @@ export async function PUT(req: Request) {
   }
 }
 
-export async function DELETE(req: Request) {
+export async function DELETE() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
