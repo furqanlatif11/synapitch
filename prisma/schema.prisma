@@ -1,9 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,49 +14,159 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   profile   Profile?
+  proposals Proposal[]
+
+  @@index([email])
 }
 
 model Profile {
   id              String   @id @default(cuid())
   userId          String   @unique
-  
+
   // Core profile information
-  headline        String   @default("")  // e.g., "Senior Full-Stack Developer | AI & Web3 Specialist"
-  about           String   @default("")  // comprehensive bio/summary
-  tagline         String   @default("")  // short one-liner
-  
+  headline        String   @default("")
+  about           String   @default("")
+  tagline         String   @default("")
+
   // Professional details
-  skills          String[] @default([])  // array of skill tags
-  expertise       String[] @default([])  // domain expertise areas
-  certifications  String[] @default([])  // professional certifications
-  languages       String[] @default([])  // spoken languages
-  
+  skills          String[] @default([])
+  expertise       String[] @default([])
+  certifications  String[] @default([])
+  languages       String[] @default([])
+
   // Experience & Education
-  experience      String   @default("")  // career summary
-  yearsExperience Int?                   // total years in industry
-  education       String   @default("")  // education details
-  
+  experience      String   @default("")
+  yearsExperience Int?
+  education       String   @default("")
+
   // Portfolio & Social
-  portfolioUrls   String[] @default([])  // personal portfolio links
+  portfolioUrls   String[] @default([])
   githubUrl       String   @default("")
   linkedinUrl     String   @default("")
   twitterUrl      String   @default("")
-  
+
   // Rates & Availability
-  hourlyRate      Int?                   // minimum hourly rate (PKR)
-  projectMinBudget Int?                  // minimum project budget
-  availability    String   @default("AVAILABLE") // AVAILABLE, BUSY, ON_BREAK
-  
+  hourlyRate      Int?
+  projectMinBudget Int?
+  availability    String   @default("AVAILABLE")
+  currency        String   @default("PKR")
+
   // Metadata
-  profileStrength Int      @default(0)   // 0-100 completeness score
+  profileStrength Int      @default(0)
   isPublic        Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
+
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isPublic])
+}
+
+model Proposal {
+  id              String   @id @default(cuid())
+  userId          String
+
+  // Basic Information
+  title           String                   // Proposal title
+  jobTitle        String                   // Job title from listing
+  jobDescription  String   @db.Text        // Original job description
+  jobLink         String?                  // Link to job posting
+
+  // Proposal Content
+  proposalContent String   @db.Text        // AI-generated or edited proposal
+  coverLetter     String?  @db.Text        // Optional cover letter
+  customizations  String?  @db.Text        // JSON with user customizations
+
+  // Pricing & Details
+  bidPrice        Float?                   // Proposed bid/rate
+  estimatedHours  Int?                     // Estimated hours (if applicable)
+  currency        String   @default("PKR")
+
+  // Platform Information
+  platform        String   @default("CUSTOM") // UPWORK, FIVERR, LINKEDIN, CUSTOM
+  externalJobId   String?                  // External job ID
+  externalJobUrl  String?                  // External job URL
+
+  // Status & Tracking
+  status          String   @default("DRAFT")    // DRAFT, SUBMITTED, ACCEPTED, REJECTED, ARCHIVED
+  submittedAt     DateTime?
+  responseAt      DateTime?
+  feedback        String?  @db.Text
+
+  // AI Metadata
+  aiGenerated     Boolean  @default(false)
+  aiModel         String?  @default("gpt-3.5-turbo") // Model used for generation
+  aiPrompt        String?  @db.Text        // Original AI prompt used
+  confidenceScore Float?                   // AI confidence score (0-100)
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([platform])
+  @@index([createdAt])
+}
+
+model ProposalTemplate {
+  id              String   @id @default(cuid())
+  userId          String
+
+  // Template Info
+  name            String
+  description     String?  @db.Text
+  template        String   @db.Text        // Template content with placeholders
+
+  // Template Settings
+  isDefault       Boolean  @default(false)
+  category        String?  @default("GENERAL") // GENERAL, TECHNICAL, DESIGN, WRITING, etc.
+
+  // Usage Stats
+  usageCount      Int      @default(0)
+  lastUsedAt      DateTime?
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isDefault])
+}
+
+model JobListing {
+  id              String   @id @default(cuid())
+  userId          String
+
+  // Job Information
+  title           String
+  description     String   @db.Text
+  jobLink         String?
+  externalJobId   String?
+  platform        String   // UPWORK, FIVERR, LINKEDIN
+
+  // Job Details
+  budget          Float?
+  budgetCurrency  String?
+  skills          String[]
+  location        String?
+  jobType         String?  // HOURLY, FIXED, RETAINER
+
+  // Status
+  isApplied       Boolean  @default(false)
+  savedForLater   Boolean  @default(false)
+
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([isApplied])
+  @@index([savedForLater])
 }
