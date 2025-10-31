@@ -3,14 +3,38 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/src/lib/prisma";
-import type { Profile } from "@prisma/client";
-
 async function parseJSON(req: Request): Promise<unknown> {
   try {
     return await req.json();
   } catch {
     return null;
   }
+}
+
+interface Profile {
+  id: string;
+  userId: string;
+  headline: string;
+  about: string;
+  tagline: string;
+  skills: string[];
+  expertise: string[];
+  certifications: string[];
+  languages: string[];
+  experience: string;
+  yearsExperience: number | null;
+  education: string;
+  portfolioUrls: string[];
+  githubUrl: string;
+  linkedinUrl: string;
+  twitterUrl: string;
+  hourlyRate: number | null;
+  projectMinBudget: number | null;
+  availability: string;
+  isPublic: boolean;
+  profileStrength: number;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 interface ProfileData {
