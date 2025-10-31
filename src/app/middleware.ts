@@ -1,4 +1,4 @@
-// app/middleware.ts (UPDATED - STRICT SESSION VALIDATION)
+// app/middleware.ts
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
@@ -7,24 +7,24 @@ export default withAuth(
     const token = req.nextauth.token;
     const pathname = req.nextUrl.pathname;
 
-    // Check if accessing protected route
+    // Protected routes
     if (pathname.startsWith("/dashboard")) {
-      // If no token, redirect to signin
+      // Redirect if not logged in
       if (!token) {
         return NextResponse.redirect(new URL("/auth/signin", req.url));
       }
 
-      // Check if token is expired (optional but recommended)
-      if (token.exp) {
+      // Token expiry check
+      const exp = typeof token.exp === "number" ? token.exp : undefined;
+      if (exp) {
         const now = Math.floor(Date.now() / 1000);
-        if (now > token.exp) {
-          // Token expired, redirect to signin
+        if (now > exp) {
           return NextResponse.redirect(new URL("/auth/signin", req.url));
         }
       }
     }
 
-    // If accessing signin/signup while authenticated, redirect to dashboard
+    // Redirect logged-in users away from signin/signup
     if ((pathname === "/auth/signin" || pathname === "/auth/signup") && token) {
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
