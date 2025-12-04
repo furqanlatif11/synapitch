@@ -10,6 +10,7 @@ const urbanist = Urbanist({
   variable: "--font-exo-2",
 });
 
+
 export default function RootLayout({
   children,
 }: {
@@ -23,6 +24,7 @@ export default function RootLayout({
             href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap"
             rel="stylesheet"
           />
+        <link rel="icon" href="/assets/images/mainLogo.png" type="image/png" />
 
           {/* Google Tag Manager */}
         </>

@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
+  viewport: "width=device-width, initial-scale=1.0",
   title: "Synapitch | Smart AI-Powered Proposal Generator for Freelancers",
   description:
     "Generate professional, tailored job proposals instantly with Synapitch — the AI-powered proposal generator for freelancers on Upwork, Fiverr, and beyond.",
@@ -56,8 +57,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
+   return (
     <html lang="en">
+      <head>
+        {/* Favicon for all browsers */}
+        <link rel="icon" href="/assets/images/mainLogo.png" type="image/png" />
+        <link rel="shortcut icon" href="/assets/images/mainLogo.png" type="image/png" />
+      </head>
       <body className="antialiased">
         <Providers>{children}</Providers>
         <Toaster position="top-right" richColors closeButton />
