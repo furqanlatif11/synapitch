@@ -351,63 +351,6 @@ export default function Pricing() {
           })}
         </div>
 
-        {/* Comparison Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="bg-white border border-[var(--primary)]/12 rounded-3xl overflow-hidden shadow-sm"
-        >
-          <div className="p-8 md:p-12 border-b border-gray-200 bg-gradient-to-r from-[var(--primary)]/8 to-transparent">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
-              Detailed Comparison
-            </h3>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <tbody>
-                {comparisonFeatures.map((group, i) => (
-                  <motion.tr
-                    key={i}
-                    className="border-t border-gray-200 hover:bg-gray-50 transition-colors"
-                    initial={{ opacity: 0 }}
-                    whileInView={{ opacity: 1 }}
-                    transition={{ delay: i * 0.1, duration: 0.3 }}
-                    viewport={{ once: true }}
-                  >
-                    <td className="px-8 py-6 bg-gradient-to-r from-gray-50 to-transparent">
-                      <p className="font-bold text-gray-900">
-                        {group.category}
-                      </p>
-                    </td>
-                    {pricingPlans.map((plan, j) => (
-                      <td key={j} className="px-8 py-6 text-center">
-                        <div className="space-y-2">
-                          {group.items.map((item, k) => (
-                            <div key={k} className="text-sm text-gray-700">
-                              {plan.name === "Starter" && k === 0 && "Limited"}
-                              {plan.name === "Professional" && "Full"}
-                              {plan.name === "Enterprise" && "Full"}
-                              {k > 0 && item.includes("report")
-                                ? "Yes"
-                                : k > 0 && item.includes("options")
-                                ? "Yes"
-                                : k > 0 && item.includes("tier")
-                                ? "Standard"
-                                : ""}
-                            </div>
-                          ))}
-                        </div>
-                      </td>
-                    ))}
-                  </motion.tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </motion.div>
 
         {/* FAQ Section */}
         <motion.div
