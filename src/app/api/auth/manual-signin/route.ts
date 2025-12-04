@@ -5,7 +5,17 @@ import bcrypt from "bcryptjs";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, password } = body;
+/*************  ✨ Windsurf Command ⭐  *************/
+/**
+ * Handles login requests
+ * 
+ * @param {Request} req - The Next.js request object
+ * @returns {Promise<NextResponse>} - A promise that resolves to a NextResponse object
+ * 
+ * @throws {Error} - If an error occurs while processing the request
+ */
+
+/*******  a691410f-6e94-4d73-bd20-507e5f16b36e  *******/    const { email, password } = body;
 
     // Validation
     if (!email || !password) {
